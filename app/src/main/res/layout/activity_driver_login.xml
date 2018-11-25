@@ -4,28 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CustomerLoginActivity"
+    tools:context=".DriverLoginActivity"
     android:orientation="vertical">
+
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Mời nhập Email"
-        android:id="@+id/email"/>
+        android:id="@+id/demail"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Mời nhập mật khẩu"
-        android:id="@+id/password"/>
+        android:id="@+id/dpassword"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Đăng nhập"
-        android:id="@+id/login"/>
+        android:id="@+id/dlogin"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Đăng ký"
-        android:id="@+id/registration"/>
+        android:id="@+id/dregistration"/>
 
 </LinearLayout>
