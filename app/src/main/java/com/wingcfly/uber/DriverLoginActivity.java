@@ -36,7 +36,7 @@ public class DriverLoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
-                    Intent aMap = new Intent(DriverLoginActivity.this, MapActivity.class);
+                    Intent aMap = new Intent(DriverLoginActivity.this, DriverMapActivity.class);
                     startActivity(aMap);
                     finish();
                     return;
