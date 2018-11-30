@@ -175,7 +175,7 @@ public class DriverLoginActivity extends AppCompatActivity {
     }
 
     public void goMapActivity() {
-        Intent dMap = new Intent(DriverLoginActivity.this, MapActivity.class);
+        Intent dMap = new Intent(DriverLoginActivity.this, DriverMapActivity.class);
         startActivity(dMap);
         finish();
         return;
