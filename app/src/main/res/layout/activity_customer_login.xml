@@ -7,25 +7,22 @@
     tools:context=".CustomerLoginActivity"
     android:orientation="vertical">
 
-    <EditText
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Mời nhập Email"
-        android:id="@+id/email"/>
-    <EditText
+        android:text="Customer Login"
+        android:textAlignment="center"
+        android:textSize="20dp"/>
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button_cus"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Mời nhập mật khẩu"
-        android:id="@+id/password"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Đăng nhập"
-        android:id="@+id/login"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Đăng ký"
-        android:id="@+id/registration"/>
+        android:layout_height="wrap_content" />
+
+    <!--<Button-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="Sign Out"-->
+    <!--android:id="@+id/sign_out_buttonGG"/>-->
 
 </LinearLayout>

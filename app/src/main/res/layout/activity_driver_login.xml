@@ -7,26 +7,22 @@
     tools:context=".DriverLoginActivity"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Driver Login"
+        android:textAlignment="center"
+        android:textSize="20dp"/>
 
-    <EditText
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Mời nhập Email"
-        android:id="@+id/demail"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Mời nhập mật khẩu"
-        android:id="@+id/dpassword"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Đăng nhập"
-        android:id="@+id/dlogin"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Đăng ký"
-        android:id="@+id/dregistration"/>
+        android:layout_height="wrap_content" />
+
+    <!--<Button-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Sign Out"-->
+        <!--android:id="@+id/sign_out_buttonGG"/>-->
 
 </LinearLayout>
