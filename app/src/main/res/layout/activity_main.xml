@@ -1,21 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/tesla"
     tools:context=".MainActivity"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/drivers"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tôi là Tài xế" />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Tôi là Khách hàng"
-        android:id="@+id/customers"/>
+        android:orientation="vertical"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal">
 
-</LinearLayout>
+        <TextView
+            android:text="C R U S H"
+            android:textSize="36sp"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="I'M YOURS"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_rider"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        android:text="Bạn đang tìm phiên bản dành cho Tài xế?"
+        android:textColor="@color/bottomText"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/tv_rider"
+        android:layout_margin="16dp">
+        
+        <Button
+            android:id="@+id/btnSignIn"
+            android:background="@drawable/btn_signin_background"
+            android:layout_marginRight="6dp"
+            android:text="Đăng nhập"
+            android:textColor="@android:color/white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            tools:ignore="Suspicious0dp" />
+
+        <Button
+            android:id="@+id/btnRegister"
+            android:background="@drawable/btn_register_background"
+            android:layout_marginLeft="6dp"
+            android:text="Đăng ký"
+            android:textColor="@color/btnRegister"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            tools:ignore="Suspicious0dp" />
+    </LinearLayout>
+
+</RelativeLayout>
