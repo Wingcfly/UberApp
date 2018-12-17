@@ -1,49 +1,49 @@
 package com.wingcfly.uber;
 
 public class User {
-    public String displayName;
-    public String mail;
-    public String ggId;
-    public String fbID;
-    public String photo;
-    public String genre;
-    public String dob;
+    public String email;
+    public String password;
+    public String phonenumber;
+    public String humanname;
 
-    public User(String displayName, String mail, String ggId, String fbID, String photo, String genre, String dob) {
-        this.displayName = displayName;
-        this.mail = mail;
-        this.ggId = ggId;
-        this.fbID = fbID;
-        this.photo = photo;
-        this.genre = genre;
-        this.dob = dob;
+    public User(){}
+
+    public User(String email, String password, String phonenumber, String humanname) {
+        this.email = email;
+        this.password = password;
+        this.phonenumber = phonenumber;
+        this.humanname = humanname;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getEmail() {
+        return email;
     }
 
-    public String getMail() {
-        return mail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getGgId() {
-        return ggId;
+    public String getPassword() {
+        return password;
     }
 
-    public String getFbID() {
-        return fbID;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getPhoto() {
-        return photo;
+    public String getPhonenumber() {
+        return phonenumber;
     }
 
-    public String getGenre() {
-        return genre;
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber;
     }
 
-    public String getDob() {
-        return dob;
+    public String getHumanname() {
+        return humanname;
+    }
+
+    public void setHumanname(String humanname) {
+        this.humanname = humanname;
     }
 }

@@ -158,9 +158,9 @@ public class DriverLoginActivity extends AppCompatActivity {
 //                        Toast.makeText(DriverLoginActivity.this, "Exist account", Toast.LENGTH_LONG).show();
                         goMapActivity();
                     } else {
-                        User newUs = new User(personName, personEmail, personId, null, String.valueOf(personPhoto), "", "");
+//                        User newUs = new User(personName, personEmail, personId, null, String.valueOf(personPhoto), "", "");
                         String id = mAuth.getCurrentUser().getUid();
-                        usDriver.child("d"+id).setValue(newUs);
+//                        usDriver.child("d"+id).setValue(newUs);
 //                        Toast.makeText(DriverLoginActivity.this, "Not Exist account", Toast.LENGTH_LONG).show();
                         goMapActivity();
                     }

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/tesla"
     tools:context=".MainActivity"
+    android:id="@+id/rootLayout"
     android:orientation="vertical">
 
     <LinearLayout
