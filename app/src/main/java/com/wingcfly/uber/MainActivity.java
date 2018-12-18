@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import dmax.dialog.SpotsDialog;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -75,31 +76,6 @@ public class MainActivity extends AppCompatActivity {
                 showSignInDialog();
             }
         });
-
-//        btnCustomer = (Button)findViewById(R.id.customers);
-//        btnDriver = (Button)findViewById(R.id.drivers);
-
-//        mAuth = FirebaseAuth.getInstance();
-
-//        btnCustomer.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent aCustomer = new Intent(MainActivity.this, CustomerLoginActivity.class);
-//                startActivity(aCustomer);
-//                finish();
-//                return;
-//            }
-//        });
-//
-//        btnDriver.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent aDriver = new Intent(MainActivity.this, DriverLoginActivity.class);
-//                startActivity(aDriver);
-//                finish();
-//                return;
-//            }
-//        });
     }
 
     private void showSignInDialog() {
@@ -118,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+
+                //disable button Sign In
+                btnSignIn.setEnabled(false);
 
                 final String email = edtEmail.getText().toString().trim();
                 final String password = edtPassword.getText().toString().trim();
@@ -140,12 +119,16 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
+                final SpotsDialog alertDialog = new SpotsDialog(MainActivity.this);
+                alertDialog.show();
+
                 //Firebase login
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                             @Override
                             public void onSuccess(AuthResult authResult) {
-                                Intent welcome = new Intent(MainActivity.this, WelcomeLogin.class);
+                                alertDialog.dismiss();
+                                Intent welcome = new Intent(MainActivity.this, Welcome.class);
                                 startActivity(welcome);
                                 finish();
                                 return;
@@ -154,8 +137,10 @@ public class MainActivity extends AppCompatActivity {
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
+                                alertDialog.dismiss();
                                 Snackbar.make(rootLayout, "Đăng nhập không thành công", Snackbar.LENGTH_SHORT)
                                         .show();
+                                btnSignUp.setEnabled(true);
                             }
                         });
             }
