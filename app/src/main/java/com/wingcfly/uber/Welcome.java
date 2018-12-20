@@ -96,27 +96,27 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
         mapFragment.getMapAsync(this);
 
         //Init View
-        location_switch = (MaterialAnimatedSwitch) findViewById(R.id.locationSwitchBtn);
-        location_switch.setOnCheckedChangeListener(new MaterialAnimatedSwitch.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(boolean b) {
-                if (b) {
+//        location_switch = (MaterialAnimatedSwitch) findViewById(R.id.locationSwitchBtn);
+//        location_switch.setOnCheckedChangeListener(new MaterialAnimatedSwitch.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(boolean b) {
+//                if (b) {
 //                    startLocationUpdate();
 //                    displayLocation();
-                    Snackbar.make(mapFragment.getView(), "Bạn đang Online", Snackbar.LENGTH_SHORT)
-                            .show();
-                } else {
+//                    Snackbar.make(mapFragment.getView(), "Bạn đang Online", Snackbar.LENGTH_SHORT)
+//                            .show();
+//                } else {
 //                    stopLocationUpdate();
 //                    mCurrent.remove();
-                    Snackbar.make(mapFragment.getView(), "Bạn đang Offline", Snackbar.LENGTH_SHORT)
-                            .show();
-                }
-            }
-        });
+//                    Snackbar.make(mapFragment.getView(), "Bạn đang Offline", Snackbar.LENGTH_SHORT)
+//                            .show();
+//                }
+//            }
+//        });
 
 //        //Geo Fire
-//        drivers = FirebaseDatabase.getInstance().getReference("Users");
-//        geoFire = new GeoFire(drivers);
+        drivers = FirebaseDatabase.getInstance().getReference("Drivers");
+        geoFire = new GeoFire(drivers);
 
 //        setUpLocation();
 
@@ -310,6 +310,16 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
         mMap = googleMap;
 
         buildGoogleApiClient();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         mMap.setMyLocationEnabled(true);
         // Add a marker in Sydney and move the camera
 //        LatLng sydney = new LatLng(-34, 151);
@@ -323,17 +333,36 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
         if (currentUserLocation != null) {
             currentUserLocation.remove();
         }
+
+        final double lat = location.getLatitude();
+        final double longt = location.getLongitude();
+
+        //Update to Firebase
+        geoFire.setLocation(FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                new GeoLocation(lat, longt));
+
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-        markerOptions.title("You are here");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        markerOptions.title("Bạn đang ở đây");
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.car2));
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(false);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         currentUserLocation = mMap.addMarker(markerOptions);
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, longt), 15.0f));
 
         if (googleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
