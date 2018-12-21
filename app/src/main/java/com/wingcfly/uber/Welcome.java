@@ -1,7 +1,9 @@
 package com.wingcfly.uber;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 
 import com.firebase.geofire.GeoLocation;
@@ -14,6 +16,7 @@ import com.google.android.gms.location.LocationListener;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -22,8 +25,11 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.firebase.geofire.GeoFire;
@@ -32,18 +38,38 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.SquareCap;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.wingcfly.uber.Common.Common;
+import com.wingcfly.uber.Remote.IGoogleAPI;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Welcome extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -52,15 +78,6 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
 
     private GoogleMap mMap;
 
-//    private static final int MY_PERMISSION_REQUEST_CODE = 7000;
-//    private static final int PLAY_SERVICE_RES_REQUEST = 7001;
-//
-//    private LocationRequest mLocationRequest;
-//    private GoogleApiClient mGoogleApiClient;
-//    private Location mLastLocation;
-////    private FusedLocationProviderClient mFusedLocationClient;
-//    private LocationCallback mLocationCallback;
-
     //Pet create
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
@@ -68,15 +85,10 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
     private Marker currentUserLocation;
     private static final int REQUEST_USER_LOCATION_CODE = 13;
 
-
-//    private static int UPDATE_INTERVAL = 5000;
-//    private static int FASTEST_INTERVAL = 3000;
-//    private static int DISPLACEMENT = 10;
+    private IGoogleAPI mService;
 
     DatabaseReference drivers;
     GeoFire geoFire;
-
-    Marker mCurrent;
 
     SupportMapFragment mapFragment;
 
@@ -96,30 +108,59 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
         mapFragment.getMapAsync(this);
 
         //Init View
-//        location_switch = (MaterialAnimatedSwitch) findViewById(R.id.locationSwitchBtn);
-//        location_switch.setOnCheckedChangeListener(new MaterialAnimatedSwitch.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(boolean b) {
-//                if (b) {
-//                    startLocationUpdate();
-//                    displayLocation();
-//                    Snackbar.make(mapFragment.getView(), "Bạn đang Online", Snackbar.LENGTH_SHORT)
-//                            .show();
-//                } else {
-//                    stopLocationUpdate();
-//                    mCurrent.remove();
-//                    Snackbar.make(mapFragment.getView(), "Bạn đang Offline", Snackbar.LENGTH_SHORT)
-//                            .show();
-//                }
-//            }
-//        });
+        location_switch = (MaterialAnimatedSwitch) findViewById(R.id.location_switch);
+        location_switch.setOnCheckedChangeListener(new MaterialAnimatedSwitch.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(boolean b) {
+                if (b) {
+
+                    if (currentUserLocation != null) {
+                        currentUserLocation.remove();
+                    }
+
+                    final double lat = lastLocation.getLatitude();
+                    final double longt = lastLocation.getLongitude();
+
+                    //Update to Firebase
+                    geoFire.setLocation(FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                            new GeoLocation(lat, longt));
+
+                    LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(latLng);
+                    markerOptions.title("Bạn đang ở đây");
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.car2));
+
+                    if (ActivityCompat.checkSelfPermission(Welcome.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(Welcome.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    mMap.setMyLocationEnabled(false);
+                    mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+                    currentUserLocation = mMap.addMarker(markerOptions);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, longt), 15.0f));
+                    Snackbar.make(mapFragment.getView(), "Bạn đang Online", Snackbar.LENGTH_SHORT)
+                            .show();
+                } else {
+                    currentUserLocation.remove();
+                    Snackbar.make(mapFragment.getView(), "Bạn đang Offline", Snackbar.LENGTH_SHORT)
+                            .show();
+                }
+            }
+        });
 
 //        //Geo Fire
         drivers = FirebaseDatabase.getInstance().getReference("Drivers");
         geoFire = new GeoFire(drivers);
-
-//        setUpLocation();
-
     }
 
     //pet create
@@ -161,141 +202,6 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
         googleApiClient.connect();
     }
 
-//    private void setUpLocation() {
-//        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-//                && (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-//            //Request Function Permission
-//            ActivityCompat.requestPermissions(this, new String[]{
-//                    Manifest.permission.ACCESS_FINE_LOCATION,
-//                    Manifest.permission.ACCESS_COARSE_LOCATION
-//            }, MY_PERMISSION_REQUEST_CODE);
-//        } else {
-//            if (checkPlayServices()) {
-//                buildGoogleApiClient();
-//                createLocationRequest();
-//                if (location_switch.isChecked()) {
-//                    displayLocation();
-//                }
-//            }
-//        }
-//    }
-
-//    private void createLocationRequest() {
-//        mLocationRequest = new LocationRequest();
-//        mLocationRequest.setInterval(UPDATE_INTERVAL);
-//        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-//        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//        mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
-//    }
-
-//    private void buildGoogleApiClient() {
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addConnectionCallbacks(this)
-//                .addOnConnectionFailedListener(this)
-//                .addApi(LocationServices.API)
-//                .build();
-//        mGoogleApiClient.connect();
-//    }
-
-//    private boolean checkPlayServices() {
-//        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-//        if (resultCode != ConnectionResult.SUCCESS) {
-//            if (GoogleApiAvailability.getInstance().isUserResolvableError(resultCode)) {
-//                GoogleApiAvailability.getInstance().getErrorDialog(this, resultCode, PLAY_SERVICE_RES_REQUEST).show();
-//            } else {
-//                Toast.makeText(this, "This device is not supported", Toast.LENGTH_SHORT).show();
-//                finish();
-//            }
-//            return false;
-//        }
-//        return true;
-//    }
-
-//    private void stopLocationUpdate() {
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-////        mFusedLocationClient.requestLocationUpdates(mLocationRequest, (com.google.android.gms.location.LocationCallback) mLocationCallback, null);
-//        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-////        mFusedLocationClient.removeLocationUpdates(mLocationCallback)
-//    }
-
-//    private void displayLocation() {
-//        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-//                && (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-//            return;
-//        }
-//        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//        if (location_switch.isChecked()) {
-//            final double latitue = mLastLocation.getLatitude();
-//            final double longtitue = mLastLocation.getLongitude();
-//
-//            //Update to Firebase
-//            geoFire.setLocation(FirebaseAuth.getInstance().getCurrentUser().getUid(),
-//                    new GeoLocation(latitue, longtitue), new GeoFire.CompletionListener() {
-//                        @Override
-//                        public void onComplete(String key, DatabaseError error) {
-//                            //Add Marker
-//                            if (mCurrent != null)
-//                                mCurrent.remove();
-//                            mCurrent = mMap.addMarker(new MarkerOptions()
-//                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.car))
-//                                    .title("Bạn"));
-//
-//                            //Move camera to this position
-//                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitue, longtitue), 15.0f));
-//
-//                            //Draw animation rotate marker
-//                            rotateMarker(mCurrent, -360, mMap);
-//                        }
-//                    });
-//        } else {
-//            Log.d("Error", "Cannot get your location");
-//        }
-//
-//    }
-
-    private void rotateMarker(final Marker mCurrent, final float i, GoogleMap mMap) {
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        final float startRotation = mCurrent.getRotation();
-        final long duration = 1500;
-
-        final Interpolator interpolator = new LinearInterpolator();
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = interpolator.getInterpolation((float) elapsed / duration);
-                float rot = t * i + (1 - t) * startRotation;
-                mCurrent.setRotation(-rot > 180 ? rot / 2 : rot);
-                if (t < 1.0) {
-                    handler.postDelayed(this, 16);
-                }
-            }
-        });
-    }
-
-//    private void startLocationUpdate() {
-//        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-//                && (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-//            return;
-//        }
-//        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-//                (com.google.android.gms.location.LocationCallback) mLocationCallback,
-//                null /* Looper */);
-//        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-//    }
-
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -308,6 +214,11 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap.setTrafficEnabled(false);
+        mMap.setIndoorEnabled(false);
+        mMap.setBuildingsEnabled(false);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
 
         buildGoogleApiClient();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -330,40 +241,6 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
     @Override
     public void onLocationChanged(Location location) {
         lastLocation = location;
-        if (currentUserLocation != null) {
-            currentUserLocation.remove();
-        }
-
-        final double lat = location.getLatitude();
-        final double longt = location.getLongitude();
-
-        //Update to Firebase
-        geoFire.setLocation(FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                new GeoLocation(lat, longt));
-
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Bạn đang ở đây");
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.car2));
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mMap.setMyLocationEnabled(false);
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
-
-        currentUserLocation = mMap.addMarker(markerOptions);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, longt), 15.0f));
-
         if (googleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
         }

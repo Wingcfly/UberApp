@@ -45,12 +45,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //add font
-//        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-//                                            .setDefaultFontPath("fonts/Arkhip_font.ttf")
-//                                            .setFontAttrId(R.attr.fontPath)
-//                                            .build());
-
         //Declaring Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance();
