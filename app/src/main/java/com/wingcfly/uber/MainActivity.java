@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase db;
     private DatabaseReference users;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     RelativeLayout rootLayout;
 
@@ -49,6 +50,20 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance();
         users = db.getReference("Users");
+
+        //Auto Login when having current account
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = mAuth.getCurrentUser();
+                if (user != null) {
+                    Intent welcome = new Intent(MainActivity.this, Welcome.class);
+                    startActivity(welcome);
+                    finish();
+                    return;
+                }
+            }
+        };
 
         //Init view
         btnSignIn = (Button) findViewById(R.id.btnSignIn);
@@ -208,11 +223,11 @@ public class MainActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                             @Override
                             public void onSuccess(AuthResult authResult) {
-                                User us = new User(email, password, phone, name);
+                                User us = new User(email, phone, name);
 
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 //add user to firebase database
-                                users.child(user.getUid())
+                                users.child("Drivers").child(user.getUid())
                                         .setValue(us)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override

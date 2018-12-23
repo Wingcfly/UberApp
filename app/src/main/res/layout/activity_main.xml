@@ -26,7 +26,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:text="Whenever you want"
+            android:text="Get a ride in minutes"
             android:textSize="16sp"
             android:layout_marginTop="10dp"
             android:textColor="@android:color/white"
