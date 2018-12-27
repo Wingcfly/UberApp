@@ -207,7 +207,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                         locationLng = Double.parseDouble(map.get(1).toString());
                     }
                     pickupLatLng = new LatLng(locationLat,locationLng);
-                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLatLng).title("Điểm đón khách").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pickup)));
+                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLatLng).title("Điểm đón khách").icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_pickup)));
                     getRouteToMarker(pickupLatLng);
                 }
             }

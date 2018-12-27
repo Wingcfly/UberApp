@@ -26,7 +26,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:text="Get a ride in minutes"
+            android:text="Nhận lấy Crush chỉ trong vài phút"
             android:textSize="16sp"
             android:layout_marginTop="10dp"
             android:textColor="@android:color/white"
@@ -40,7 +40,7 @@
         android:id="@+id/tv_rider"
         android:textAlignment="center"
         android:textSize="12sp"
-        android:text="Bạn đang tìm phiên bản dành cho Tài xế?"
+        android:text="Bạn đang tìm kiếm cho mình một Crush?"
         android:textColor="@color/bottomText"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
@@ -51,32 +51,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="2"
+        android:weightSum="1"
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/tv_rider"
         android:layout_margin="16dp">
-        
+
         <Button
             android:id="@+id/btnSignIn"
             android:background="@drawable/btn_signin_background"
-            android:layout_marginRight="6dp"
-            android:text="Đăng nhập"
+            android:text="Đăng nhập với Google"
             android:textColor="@android:color/white"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             tools:ignore="Suspicious0dp" />
 
-        <Button
-            android:id="@+id/btnRegister"
-            android:background="@drawable/btn_register_background"
-            android:layout_marginLeft="6dp"
-            android:text="Đăng ký"
-            android:textColor="@color/btnRegister"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            tools:ignore="Suspicious0dp" />
+
     </LinearLayout>
 
 </RelativeLayout>

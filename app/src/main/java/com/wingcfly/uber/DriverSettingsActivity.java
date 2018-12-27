@@ -45,7 +45,7 @@ public class DriverSettingsActivity extends AppCompatActivity {
 
     private Button mBack, mConfirm;
 
-    private ImageView mProfileImage;
+//    private ImageView mProfileImage;
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDriverDatabase;
@@ -72,7 +72,7 @@ public class DriverSettingsActivity extends AppCompatActivity {
         mPhoneField = (EditText) findViewById(R.id.phone);
         mCarField = (EditText) findViewById(R.id.car);
 
-        mProfileImage = (ImageView) findViewById(R.id.profileImage);
+//        mProfileImage = (ImageView) findViewById(R.id.profileImage);
 
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
 
@@ -85,14 +85,14 @@ public class DriverSettingsActivity extends AppCompatActivity {
 
         getUserInfo();
 
-        mProfileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(intent, 1);
-            }
-        });
+//        mProfileImage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(Intent.ACTION_PICK);
+//                intent.setType("image/*");
+//                startActivityForResult(intent, 1);
+//            }
+//        });
 
         mConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,10 +141,10 @@ public class DriverSettingsActivity extends AppCompatActivity {
                                 break;
                         }
                     }
-                    if(map.get("profileImageUrl") != null){
-                        mProfileImageUrl = map.get("profileImageUrl").toString();
-                        Glide.with(getApplication()).load(mProfileImageUrl).into(mProfileImage);
-                    }
+//                    if(map.get("profileImageUrl") != null){
+//                        mProfileImageUrl = map.get("profileImageUrl").toString();
+//                        Glide.with(getApplication()).load(mProfileImageUrl).into(mProfileImage);
+//                    }
                 }
             }
 
@@ -204,10 +204,10 @@ public class DriverSettingsActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 //                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    Task<Uri> downloadUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl();
-                    Map newImage = new HashMap();
-                    newImage.put("profileImageUrl", downloadUrl.toString());
-                    mDriverDatabase.updateChildren(newImage);
+//                    Task<Uri> downloadUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl();
+//                    Map newImage = new HashMap();
+//                    newImage.put("profileImageUrl", downloadUrl.toString());
+//                    mDriverDatabase.updateChildren(newImage);
 
                     finish();
                     return;
@@ -223,9 +223,9 @@ public class DriverSettingsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 1 && resultCode == Activity.RESULT_OK){
-            final Uri imageUri = data.getData();
-            resultUri = imageUri;
-            mProfileImage.setImageURI(resultUri);
+//            final Uri imageUri = data.getData();
+//            resultUri = imageUri;
+//            mProfileImage.setImageURI(resultUri);
         }
     }
 }

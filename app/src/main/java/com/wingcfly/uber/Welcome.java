@@ -220,7 +220,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
                         locationLng = Double.parseDouble(map.get(1).toString());
                     }
                     pickupLatLng = new LatLng(locationLat,locationLng);
-                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLatLng).title("Điểm đón").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pickup)));
+                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLatLng).title("Điểm đón").icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_pickup)));
                     getRouteToMarker(pickupLatLng);
                 }
             }
@@ -251,10 +251,10 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
                     if(map.get("destination")!=null){
                         destination = map.get("destination").toString();
-                        mCustomerDestination.setText("Destination: " + destination);
+                        mCustomerDestination.setText("Điểm đến: " + destination);
                     }
                     else{
-                        mCustomerDestination.setText("Destination: --");
+                        mCustomerDestination.setText("Điểm đến: --");
                     }
 
                     Double destinationLat = 0.0;
@@ -388,7 +388,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
                 rideDistance += mLastLocation.distanceTo(location)/1000;
             }
 
-//            mLastLocation = location;
+            mLastLocation = location;
             LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
 //            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 //            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
