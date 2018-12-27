@@ -65,7 +65,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
 
         private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
+    private Location mLastLocation;
     LocationRequest mLocationRequest;
 
     private Marker currentUserLocation;
@@ -327,7 +327,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
         mCustomerInfo.setVisibility(View.GONE);
         mCustomerName.setText("");
         mCustomerPhone.setText("");
-        mCustomerDestination.setText("Destination: --");
+        mCustomerDestination.setText("Điểm đến: --");
         mCustomerProfileImage.setImageResource(R.drawable.ic_defualt_user);
     }
 
